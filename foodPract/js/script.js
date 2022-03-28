@@ -1,3 +1,5 @@
+'use strict';
+
 window.addEventListener('DOMContentLoaded', () => {
     
     const tabs = document.querySelectorAll('.tabheader__item'),
@@ -83,15 +85,16 @@ window.addEventListener('DOMContentLoaded', () => {
     const modalTrigger = document.querySelectorAll('[data-modal]'),
           modal = document.querySelector('.modal'),
           modalCloseBtn = document.querySelector('[data-close]');
-    
+
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearTimeout(modalTimerId);
+    }
+
     modalTrigger.forEach(btn => {
-
-        btn.addEventListener('click', () => {
-            modal.classList.add('show');
-            modal.classList.remove('hide');
-            document.body.style.overflow = 'hidden';
-        });
-
+        btn.addEventListener('click', openModal);
     });
     
     function closeModal() {
@@ -112,5 +115,47 @@ window.addEventListener('DOMContentLoaded', () => {
         if (e.code === 'Escape' && modal.classList.contains('show')) {
             closeModal();
         }
-    });
+    }); 
+
+    const modalTimerID = setTimeout(openModal, 1000);
+// classes for menu cards    
+    class Menu {
+        constructor (src, alt, title, description, price, parentSelector) {
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.description = description;
+            this.price = price;
+            this.parent = document.querySelector(parentSelector);
+        }
+    
+        render () {
+            const element = document.createElement('div');  
+            element.innerHTML = `
+                    <div class="menu__item">
+                        <img src= ${this.src} alt= ${this.alt}>
+                        <h3 class="menu__item-subtitle">${this.title}</h3>
+                        <div class="menu__item-descr">${this.description}!</div>
+                        <div class="menu__item-divider"></div>
+                        <div class="menu__item-price">
+                            <div class="menu__item-cost">Цена:</div>
+                            <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                        </div>
+                    </div>
+            `;
+            this.parent.append(element);
+        } 
+    }
+
+    new Menu(
+        'img/tabs/vegy.jpg',
+        'vegy',
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        6,
+        '.menu .container'
+    ).render();
+
 });
+
+
